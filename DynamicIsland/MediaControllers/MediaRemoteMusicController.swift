@@ -210,8 +210,11 @@ class MediaRemoteMusicController: ObservableObject, MediaControllerProtocol {
 
     @MainActor
     func canSendPlaybackCommand() -> Bool {
-        // MediaRemote 命令是系统全局命令；只有当前流已确认属于本控制器时才发送，避免误控其他播放器。
-        playbackReducer.acceptedSourceBundleIdentifier != nil
+        // MediaRemote 命令是系统全局命令；Auto Detect 跟随系统 Now Playing 目标，因此允许直接发送。
+        if profile.mode == .autoDetect { return true }
+
+        // 过滤型控制器必须先确认来源，避免误控其他播放器。
+        return playbackReducer.acceptedSourceBundleIdentifier != nil
     }
 
     @MainActor
