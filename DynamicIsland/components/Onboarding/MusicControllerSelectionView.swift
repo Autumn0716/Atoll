@@ -137,6 +137,8 @@ extension MediaControllerType {
         switch self {
         case .nowPlaying:
             return String(localized: "Works with most media apps, including browsers, to detect what's playing. Note: This may be removed in a future macOS version.")
+        case .autoDetect:
+            return String(localized: "Follows the current macOS Now Playing source automatically.")
         case .spotify:
             return String(localized: "Connects directly to the Spotify app.")
         case .appleMusic:
@@ -145,6 +147,10 @@ extension MediaControllerType {
             return String(localized: "Requires a third-party client with API plugin enabled.")
         case .amazonMusic:
             return String(localized: "Uses macOS Now Playing when the Amazon Music app is the active media source. Playback controls follow the system Now Playing target. Scrubbing the timeline may not work if the Amazon Music app does not support remote seek.")
+        case .netEaseCloudMusic:
+            return String(localized: "Uses macOS Now Playing when the NetEase Cloud Music desktop app is the active media source.")
+        case .qqMusic:
+            return String(localized: "Uses macOS Now Playing when the QQ Music desktop app is the active media source.")
         }
     }
 }

@@ -679,8 +679,14 @@ class MusicManager: ObservableObject {
             newController = SpotifyController()
         case .youtubeMusic:
             newController = YouTubeMusicController()
+        case .autoDetect:
+            newController = AutoDetectMediaController()
         case .amazonMusic:
             newController = AmazonMusicController()
+        case .netEaseCloudMusic:
+            newController = NetEaseCloudMusicController()
+        case .qqMusic:
+            newController = QQMusicController()
         }
 
         // Set up state observation for the new controller
@@ -1197,12 +1203,18 @@ class MusicManager: ObservableObject {
         let targetState = !isPlaying
 
         Task {
+            if let mediaRemoteController = controller as? MediaRemoteMusicController {
+                guard await mediaRemoteController.canSendPlaybackCommand() else { return }
+            }
+
             await MainActor.run {
                 pendingOptimisticPlayState = targetState
                 applyPlayState(targetState, animation: .smooth(duration: 0.18))
             }
 
-            if targetState {
+            if let mediaRemoteController = controller as? MediaRemoteMusicController {
+                await mediaRemoteController.togglePlay()
+            } else if targetState {
                 await controller.play()
             } else {
                 await controller.pause()
@@ -1724,7 +1736,7 @@ extension MusicManager {
             return spotifyGreen
         case .amazonMusic:
             return amazonOrange
-        case .nowPlaying:
+        case .nowPlaying, .autoDetect, .netEaseCloudMusic, .qqMusic:
             if let bundleIdentifier,
                let bundleColor = brandAccentColor(forBundleIdentifier: bundleIdentifier) {
                 return bundleColor
